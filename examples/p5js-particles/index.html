@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partículas Interativas - p5.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 1000;
+        }
+
+        .controls h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .controls button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 0;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .controls button:hover {
+            opacity: 0.8;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../../index.html" class="back-btn">← Voltar</a>
+
+    <div class="controls">
+        <h3>🎨 Controles</h3>
+        <button onclick="changeColor()">Mudar Cores</button>
+        <button onclick="resetParticles()">Reset</button>
+        <p style="font-size: 12px; margin-top: 15px; opacity: 0.8;">
+            Mova o mouse para interagir!<br>
+            Clique para adicionar partículas.
+        </p>
+    </div>
+
+    <script>
+        let particles = [];
+        let hueValue = 0;
+        let colorMode = 0;
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            colorMode(HSB, 360, 100, 100, 100);
+
+            // Criar partículas iniciais
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle(random(width), random(height)));
+            }
+        }
+
+        function draw() {
+            background(0, 0, 0, 15); // Trail effect
+
+            hueValue += 0.5;
+            if (hueValue > 360) hueValue = 0;
+
+            for (let particle of particles) {
+                particle.update();
+                particle.show();
+                particle.connect(particles);
+            }
+        }
+
+        function mousePressed() {
+            // Adicionar partículas ao clicar
+            for (let i = 0; i < 5; i++) {
+                particles.push(new Particle(mouseX, mouseY));
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+
+        function changeColor() {
+            colorMode = (colorMode + 1) % 3;
+        }
+
+        function resetParticles() {
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle(random(width), random(height)));
+            }
+        }
+
+        class Particle {
+            constructor(x, y) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(random(-1, 1), random(-1, 1));
+                this.acc = createVector(0, 0);
+                this.size = random(3, 8);
+                this.maxSpeed = 3;
+            }
+
+            update() {
+                // Atração pelo mouse
+                let mouse = createVector(mouseX, mouseY);
+                let force = p5.Vector.sub(mouse, this.pos);
+                let distance = force.mag();
+                distance = constrain(distance, 25, 200);
+
+                let strength = (200 / distance) * 0.1;
+                force.setMag(strength);
+                this.acc.add(force);
+
+                this.vel.add(this.acc);
+                this.vel.limit(this.maxSpeed);
+                this.pos.add(this.vel);
+                this.acc.mult(0);
+
+                // Wrap around screen
+                if (this.pos.x > width) this.pos.x = 0;
+                if (this.pos.x < 0) this.pos.x = width;
+                if (this.pos.y > height) this.pos.y = 0;
+                if (this.pos.y < 0) this.pos.y = height;
+            }
+
+            show() {
+                noStroke();
+
+                let col;
+                if (colorMode === 0) {
+                    col = color(hueValue, 80, 100, 80);
+                } else if (colorMode === 1) {
+                    col = color((hueValue + 180) % 360, 80, 100, 80);
+                } else {
+                    col = color(random(360), 80, 100, 80);
+                }
+
+                fill(col);
+                circle(this.pos.x, this.pos.y, this.size);
+            }
+
+            connect(particles) {
+                for (let other of particles) {
+                    let d = dist(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
+
+                    if (d < 100 && d > 0) {
+                        let alpha = map(d, 0, 100, 50, 0);
+                        stroke(hueValue, 60, 100, alpha);
+                        strokeWeight(1);
+                        line(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

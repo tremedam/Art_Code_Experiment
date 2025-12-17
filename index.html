@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Code Experiments - Galeria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 1.2em;
+        }
+
+        .text {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .card-header h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .card-header .tech {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-body p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:nth-child(1) .card-header {
+            background: linear-gradient(135deg, #ff3673 0%, #fee140 100%);
+        }
+
+        .card:nth-child(2) .card-header {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        .card:nth-child(3) .card-header {
+            background: linear-gradient(135deg, #22107c 0%, #8000ff 100%);
+        }
+
+        .card:nth-child(4) .card-header {
+            background: linear-gradient(135deg, #059000 0%, #95530d 100%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎨 Art Code Experiments</h1>
+        <p class="subtitle">Explorando arte generativa e creative coding na web, um trabalho totalmente experimental,
+            aberto e colaborativo.</p>
+        <p class="text">Sinta-se a vontade para explorar e contribuir com suas artes!</p>
+        <div class="gallery">
+            <div class="card" onclick="window.location.href='examples/p5js-particles/index.html'">
+                <div class="card-header">
+                    <h2>Partículas Interativas</h2>
+                    <p class="tech">p5.js</p>
+                </div>
+                <div class="card-body">
+                    <p>Sistema de partículas que respondem ao movimento do mouse. Perfeito para entender animação e
+                        interatividade.</p>
+                    <a href="examples/p5js-particles/index.html" class="btn">Explorar →</a>
+                </div>
+            </div>
+
+            <div class="card" onclick="window.location.href='examples/canvas-generative/index.html'">
+                <div class="card-header">
+                    <h2>Arte Generativa</h2>
+                    <p class="tech">Canvas API</p>
+                </div>
+                <div class="card-body">
+                    <p>Padrões geométricos gerados aleatoriamente. Aprenda os fundamentos do Canvas HTML5.</p>
+                    <a href="examples/canvas-generative/index.html" class="btn">Explorar →</a>
+                </div>
+            </div>
+
+            <div class="card" onclick="window.location.href='examples/threejs-3d/index.html'">
+                <div class="card-header">
+                    <h2>Galáxia 3D</h2>
+                    <p class="tech">Three.js</p>
+                </div>
+                <div class="card-body">
+                    <p>Exploração de gráficos 3D com uma galáxia interativa rotacionando no espaço.</p>
+                    <a href="examples/threejs-3d/index.html" class="btn">Explorar →</a>
+                </div>
+            </div>
+
+            <div class="card" onclick="window.location.href='examples/p5js-fractal/index.html'">
+                <div class="card-header">
+                    <h2>Árvore Fractal</h2>
+                    <p class="tech">p5.js</p>
+                </div>
+                <div class="card-body">
+                    <p>Geração recursiva de fractais naturais. Aprenda sobre recursão e padrões matemáticos.</p>
+                    <a href="examples/p5js-fractal/index.html" class="btn">Explorar →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

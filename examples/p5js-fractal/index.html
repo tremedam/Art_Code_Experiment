@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Árvore Fractal - p5.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #1e3c72, #2a5298);
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .controls h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+
+        .control-group button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .control-group button:hover {
+            opacity: 0.8;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 1000;
+        }
+
+        .value-display {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../../index.html" class="back-btn">← Voltar</a>
+
+    <div class="controls">
+        <h3>🌳 Árvore Fractal</h3>
+
+        <div class="control-group">
+            <label>Ângulo: <span id="angleValue">25</span>°</label>
+            <input type="range" id="angleSlider" min="0" max="90" value="25" step="1">
+        </div>
+
+        <div class="control-group">
+            <label>Profundidade: <span id="depthValue">8</span></label>
+            <input type="range" id="depthSlider" min="1" max="12" value="8" step="1">
+        </div>
+
+        <div class="control-group">
+            <label>Comprimento: <span id="lengthValue">120</span></label>
+            <input type="range" id="lengthSlider" min="50" max="200" value="120" step="10">
+        </div>
+
+        <div class="control-group">
+            <button onclick="randomize()">Aleatório</button>
+        </div>
+
+        <p style="font-size: 11px; opacity: 0.7; margin-top: 15px;">
+            Ajuste os parâmetros para criar diferentes formas de árvores fractais!
+        </p>
+    </div>
+
+    <script>
+        let angle = 25;
+        let depth = 8;
+        let len = 120;
+
+        // Atualizar valores dos sliders
+        document.getElementById('angleSlider').addEventListener('input', (e) => {
+            angle = e.target.value;
+            document.getElementById('angleValue').textContent = angle;
+        });
+
+        document.getElementById('depthSlider').addEventListener('input', (e) => {
+            depth = e.target.value;
+            document.getElementById('depthValue').textContent = depth;
+        });
+
+        document.getElementById('lengthSlider').addEventListener('input', (e) => {
+            len = e.target.value;
+            document.getElementById('lengthValue').textContent = len;
+        });
+
+        function randomize() {
+            angle = Math.floor(Math.random() * 90);
+            depth = Math.floor(Math.random() * 10) + 3;
+            len = Math.floor(Math.random() * 150) + 50;
+
+            document.getElementById('angleSlider').value = angle;
+            document.getElementById('depthSlider').value = depth;
+            document.getElementById('lengthSlider').value = len;
+
+            document.getElementById('angleValue').textContent = angle;
+            document.getElementById('depthValue').textContent = depth;
+            document.getElementById('lengthValue').textContent = len;
+        }
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            angleMode(DEGREES);
+        }
+
+        function draw() {
+            background(30, 60, 114);
+
+            // Gradiente do céu
+            for (let i = 0; i < height; i++) {
+                let inter = map(i, 0, height, 0, 1);
+                let c = lerpColor(color(30, 60, 114), color(42, 82, 152), inter);
+                stroke(c);
+                line(0, i, width, i);
+            }
+
+            // Chão
+            fill(34, 139, 34, 150);
+            noStroke();
+            rect(0, height - 100, width, 100);
+
+            // Árvore
+            stroke(139, 90, 43);
+            translate(width / 2, height - 100);
+            branch(len, depth);
+        }
+
+        function branch(len, depth) {
+            if (depth === 0) return;
+
+            strokeWeight(depth * 1.5);
+
+            // Gradiente de cor (marrom para verde)
+            let from = color(139, 90, 43);
+            let to = color(34, 139, 34);
+            let inter = map(depth, 0, 12, 1, 0);
+            let col = lerpColor(to, from, inter);
+            stroke(col);
+
+            line(0, 0, 0, -len);
+            translate(0, -len);
+
+            // Galho direito
+            push();
+            rotate(angle);
+            branch(len * 0.67, depth - 1);
+            pop();
+
+            // Galho esquerdo
+            push();
+            rotate(-angle);
+            branch(len * 0.67, depth - 1);
+            pop();
+
+            // Galho adicional aleatório (às vezes)
+            if (depth > 3 && random(1) > 0.7) {
+                push();
+                rotate(random(-angle / 2, angle / 2));
+                branch(len * 0.5, depth - 2);
+                pop();
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+    </script>
+</body>
+
+</html>
