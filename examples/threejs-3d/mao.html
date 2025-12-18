@@ -184,6 +184,12 @@
             y: 0
         };
 
+        // Zoom com roda do mouse
+        renderer.domElement.addEventListener('wheel', function (e) {
+            camera.position.z += e.deltaY * 0.01;
+            camera.position.z = Math.max(5, Math.min(20, camera.position.z));
+        });
+
         // Variáveis para detectar rotação da mão
         let previousRotation = new THREE.Quaternion();
         let angularVelocity = new THREE.Vector3(0, 0, 0);

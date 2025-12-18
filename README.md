@@ -17,6 +17,7 @@ Art_Code_Experiment/
 │   ├── p5js-particles/     # Sistema de partículas interativas (p5.js)
 │   ├── canvas-generative/  # Arte generativa com Canvas API
 │   ├── threejs-3d/         # Galáxia 3D com Three.js
+|   ├── threejs-3d/         # Mão 3D com Three.js 
 │   └── p5js-fractal/       # Árvore fractal recursiva (p5.js)
 └── README.md
 ```
@@ -57,7 +58,16 @@ Simulação de uma galáxia espiral em 3D com milhares de partículas.
 - 10.000 partículas
 - Gradiente de cores
 
-### 4. Árvore Fractal (p5.js)
+### 4. Mão 3D (Three.js)
+Simula uma mão simples em 3D com dedos articulados.
+
+**Recursos:**
+- Rotação com mouse
+- Responsividade dos dedos
+- Interatividade com todos os dedos
+- Emojis padrões de mão.
+
+### 5. Árvore Fractal (p5.js)
 Geração recursiva de árvores fractais com controles interativos.
 
 **Controles:**
