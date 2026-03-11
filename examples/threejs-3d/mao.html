@@ -23,23 +23,86 @@
             left: 20px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             z-index: 1000;
-            max-width: 250px;
+            max-width: 260px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
         }
 
         .info h3 {
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 15px;
         }
 
         .info p {
-            font-size: 12px;
-            line-height: 1.6;
+            font-size: 10px;
+            line-height: 1.4;
+            opacity: 0.8;
+            margin-bottom: 0;
+            margin-top: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 10px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 11px;
+            margin-bottom: 4px;
             opacity: 0.9;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+
+        .control-group select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 11px;
+        }
+
+        .control-group select option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        .control-group button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0;
+            width: 100%;
+            font-size: 12px;
+        }
+
+        .control-group button:hover {
+            opacity: 0.8;
+        }
+
+        .gesture-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .gesture-grid button {
+            padding: 6px;
+            font-size: 10px;
         }
 
         .back-btn {
@@ -62,13 +125,81 @@
     <a href="../../index.html" class="back-btn">← Voltar</a>
 
     <div class="info">
-        <h3>✋ Mão 3D Interativa</h3>
-        <p><strong>Mouse:</strong> Arraste para rotacionar<br>
-            <strong>Teclado:</strong><br>
-            1-4: Dedos | 5: Polegar<br>
-            F: Fechar | O: Abrir<br>
-            W: Acenar | P: Paz ✌️<br>
-            T: Positivo 👍
+        <h3>✋ Mão 3D</h3>
+
+        <div class="control-group">
+            <label>Tema:</label>
+            <select id="themeSelect">
+                <option value="human">👤 Humano</option>
+                <option value="robot">🤖 Robô</option>
+                <option value="alien">👽 Alienígena</option>
+                <option value="ghost">👻 Fantasma</option>
+                <option value="zombie">🧟 Zumbi</option>
+                <option value="gold">⭐ Dourado</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Gestos Rápidos:</label>
+            <div class="gesture-grid">
+                <button onclick="setGesture('open')">✋ Abrir</button>
+                <button onclick="setGesture('fist')">✊ Fechar</button>
+                <button onclick="setGesture('peace')">✌️ Paz</button>
+                <button onclick="setGesture('thumbsup')">👍 Positivo</button>
+                <button onclick="setGesture('ok')">👌 OK</button>
+                <button onclick="setGesture('rock')">🤘 Rock</button>
+                <button onclick="setGesture('shaka')">🤙 Shaka</button>
+                <button onclick="setGesture('one')">☝️ Um</button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Dedo 1: <span id="finger0Value">0</span>%</label>
+            <input type="range" id="finger0Slider" min="0" max="100" value="0">
+        </div>
+
+        <div class="control-group">
+            <label>Dedo 2: <span id="finger1Value">0</span>%</label>
+            <input type="range" id="finger1Slider" min="0" max="100" value="0">
+        </div>
+
+        <div class="control-group">
+            <label>Dedo 3: <span id="finger2Value">0</span>%</label>
+            <input type="range" id="finger2Slider" min="0" max="100" value="0">
+        </div>
+
+        <div class="control-group">
+            <label>Dedo 4: <span id="finger3Value">0</span>%</label>
+            <input type="range" id="finger3Slider" min="0" max="100" value="0">
+        </div>
+
+        <div class="control-group">
+            <label>Polegar: <span id="thumbValue">0</span>%</label>
+            <input type="range" id="thumbSlider" min="0" max="100" value="0">
+        </div>
+
+        <div class="control-group">
+            <label>Animação:</label>
+            <select id="animationSelect">
+                <option value="none">Nenhuma</option>
+                <option value="wave">👋 Acenar</option>
+                <option value="drum">🥁 Tamborilar</option>
+                <option value="wiggle">🌊 Ondular</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Velocidade: <span id="speedValue">1.0</span>x</label>
+            <input type="range" id="speedSlider" min="0.1" max="3" value="1" step="0.1">
+        </div>
+
+        <div class="control-group">
+            <button onclick="screenshot()">📸 Captura</button>
+        </div>
+
+        <p>
+            🖱️ Arraste para rotacionar<br>
+            🔍 Scroll para zoom
         </p>
     </div>
 
@@ -77,75 +208,117 @@
         // Configuração básica da cena
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer();
+        const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         document.body.appendChild(renderer.domElement);
         camera.position.z = 10;
 
-        // Carregar Iluminação
+        // Iluminação melhorada
         const light = new THREE.DirectionalLight(0xffffff, 1);
         light.position.set(5, 5, 5);
+        light.castShadow = true;
         scene.add(light);
 
         const ambientLight = new THREE.AmbientLight(0x404040);
         scene.add(ambientLight);
 
-        // Criar Mão 3D Simples
+        const fillLight = new THREE.PointLight(0x8888ff, 0.5);
+        fillLight.position.set(-5, 0, 5);
+        scene.add(fillLight);
+
+        // Parâmetros
+        const parameters = {
+            theme: 'human',
+            animation: 'none',
+            speed: 1.0,
+            fingerRotations: [0, 0, 0, 0],
+            thumbRotation: 0
+        };
+
+        // Temas
+        const themes = {
+            human: { color: 0xffc0cb, metalness: 0.2, roughness: 0.8, emissive: 0x000000, emissiveIntensity: 0 },
+            robot: { color: 0x888888, metalness: 0.9, roughness: 0.1, emissive: 0x0088ff, emissiveIntensity: 0.2 },
+            alien: { color: 0x00ff88, metalness: 0.3, roughness: 0.7, emissive: 0x00aa44, emissiveIntensity: 0.3 },
+            ghost: { color: 0xccccff, metalness: 0.1, roughness: 0.9, emissive: 0xaaaaff, emissiveIntensity: 0.5 },
+            zombie: { color: 0x88aa66, metalness: 0.1, roughness: 0.9, emissive: 0x000000, emissiveIntensity: 0 },
+            gold: { color: 0xffd700, metalness: 0.8, roughness: 0.2, emissive: 0xffaa00, emissiveIntensity: 0.2 }
+        };
+
+        // Criar material
+        let handMaterial = new THREE.MeshStandardMaterial(themes.human);
+        let fingerMaterial = new THREE.MeshStandardMaterial(themes.human);
+
+        // Criar Mão 3D
         const handGeometry = new THREE.BoxGeometry(4, 6, 1);
-        const handMaterial = new THREE.MeshStandardMaterial({ color: 0xffc0cb, metalness: 0.5, roughness: 0.5 });
         const handMesh = new THREE.Mesh(handGeometry, handMaterial);
+        handMesh.castShadow = true;
+        handMesh.receiveShadow = true;
         scene.add(handMesh);
 
         // Criar Dedos
-        const fingers = []; // Array para guardar referências dos dedos completos
-        const phalanges = []; // Array para guardar todas as falanges individualmente
-        let thumbGroup; // Referência ao polegar
-        let thumbPhalanges = []; // Falanges do polegar
+        const fingers = [];
+        const phalanges = [];
+        let thumbGroup;
+        let thumbPhalanges = [];
 
-        const fingerMaterial = new THREE.MeshStandardMaterial({ color: 0xffc0cb, metalness: 0.5, roughness: 0.5 });
         const falangeProximal = new THREE.BoxGeometry(0.8, 2, 0.8);
         const falangeMedial = new THREE.BoxGeometry(0.7, 1.5, 0.7);
         const falangeDistal = new THREE.BoxGeometry(0.6, 1, 0.6);
 
-        // Estados de animação
-        let animationMode = 'none'; // 'none', 'wave', 'peace', 'thumbsup'
-        let fingerTargetRotations = [0, 0, 0, 0]; // Rotações alvo para cada dedo
-        let thumbTargetRotation = 0;
+        function updateTheme() {
+            const theme = themes[parameters.theme];
+            handMaterial.color.setHex(theme.color);
+            handMaterial.metalness = theme.metalness;
+            handMaterial.roughness = theme.roughness;
+            handMaterial.emissive.setHex(theme.emissive);
+            handMaterial.emissiveIntensity = theme.emissiveIntensity;
+
+            fingerMaterial.color.setHex(theme.color);
+            fingerMaterial.metalness = theme.metalness;
+            fingerMaterial.roughness = theme.roughness;
+            fingerMaterial.emissive.setHex(theme.emissive);
+            fingerMaterial.emissiveIntensity = theme.emissiveIntensity;
+
+            handMaterial.needsUpdate = true;
+            fingerMaterial.needsUpdate = true;
+        }
 
         function positionFingers() {
             const fingerPositions = [-1.5, -0.5, 0.5, 1.5];
 
-            // Criar 4 dedos normais com falanges articuladas
             fingerPositions.forEach((xPos, index) => {
                 const fingerGroup = new THREE.Group();
                 const fingerPhalanges = [];
 
-                // Falange Proximal (base)
                 const proximalGroup = new THREE.Group();
                 const proximal = new THREE.Mesh(falangeProximal, fingerMaterial);
-                proximal.position.set(0, 1, 0); // Pivot na base
+                proximal.position.set(0, 1, 0);
+                proximal.castShadow = true;
                 proximalGroup.add(proximal);
                 proximalGroup.position.set(0, 0, 0);
                 fingerGroup.add(proximalGroup);
                 fingerPhalanges.push(proximalGroup);
 
-                // Falange Medial (meio)
                 const medialGroup = new THREE.Group();
                 const medial = new THREE.Mesh(falangeMedial, fingerMaterial);
-                medial.position.set(0, 0.75, 0); // Pivot na base
+                medial.position.set(0, 0.75, 0);
+                medial.castShadow = true;
                 medialGroup.add(medial);
-                medialGroup.position.set(0, 2, 0); // Posicionada no topo da proximal
-                proximalGroup.add(medialGroup); // Filho da proximal
+                medialGroup.position.set(0, 2, 0);
+                proximalGroup.add(medialGroup);
                 fingerPhalanges.push(medialGroup);
 
-                // Falange Distal (ponta)
                 const distalGroup = new THREE.Group();
                 const distal = new THREE.Mesh(falangeDistal, fingerMaterial);
-                distal.position.set(0, 0.5, 0); // Pivot na base
+                distal.position.set(0, 0.5, 0);
+                distal.castShadow = true;
                 distalGroup.add(distal);
-                distalGroup.position.set(0, 1.5, 0); // Posicionada no topo da medial
-                medialGroup.add(distalGroup); // Filho da medial
+                distalGroup.position.set(0, 1.5, 0);
+                medialGroup.add(distalGroup);
                 fingerPhalanges.push(distalGroup);
 
                 fingerGroup.position.set(xPos, 3, 0);
@@ -154,12 +327,12 @@
                 phalanges.push(fingerPhalanges);
             });
 
-            // Criar polegar com falanges articuladas
             thumbGroup = new THREE.Group();
 
             const thumbProximalGroup = new THREE.Group();
             const thumbProximal = new THREE.Mesh(falangeProximal, fingerMaterial);
             thumbProximal.position.set(0, 1, 0);
+            thumbProximal.castShadow = true;
             thumbProximalGroup.add(thumbProximal);
             thumbGroup.add(thumbProximalGroup);
             thumbPhalanges.push(thumbProximalGroup);
@@ -167,6 +340,7 @@
             const thumbDistalGroup = new THREE.Group();
             const thumbDistal = new THREE.Mesh(falangeDistal, fingerMaterial);
             thumbDistal.position.set(0, 0.5, 0);
+            thumbDistal.castShadow = true;
             thumbDistalGroup.add(thumbDistal);
             thumbDistalGroup.position.set(0, 2, 0);
             thumbProximalGroup.add(thumbDistalGroup);
@@ -177,120 +351,189 @@
             handMesh.add(thumbGroup);
         }
 
-        // Controles de Rotação com Mouse
+        // Event Listeners
+        document.getElementById('themeSelect').addEventListener('change', (e) => {
+            parameters.theme = e.target.value;
+            updateTheme();
+        });
+
+        document.getElementById('animationSelect').addEventListener('change', (e) => {
+            parameters.animation = e.target.value;
+        });
+
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            parameters.speed = parseFloat(e.target.value);
+            document.getElementById('speedValue').textContent = parameters.speed.toFixed(1);
+        });
+
+        // Sliders dos dedos
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`finger${i}Slider`).addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                parameters.fingerRotations[i] = value / 100 * 1.2;
+                document.getElementById(`finger${i}Value`).textContent = value;
+                parameters.animation = 'none';
+            });
+        }
+
+        document.getElementById('thumbSlider').addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            parameters.thumbRotation = value / 100;
+            document.getElementById('thumbValue').textContent = value;
+            parameters.animation = 'none';
+        });
+
+        // Funções de gestos
+        function setGesture(gesture) {
+            parameters.animation = 'none';
+
+            switch (gesture) {
+                case 'open':
+                    parameters.fingerRotations = [0, 0, 0, 0];
+                    parameters.thumbRotation = 0;
+                    break;
+                case 'fist':
+                    parameters.fingerRotations = [1.2, 1.2, 1.2, 1.2];
+                    parameters.thumbRotation = 1;
+                    break;
+                case 'peace':
+                    parameters.fingerRotations = [0, 0, 1.2, 1.2];
+                    parameters.thumbRotation = 1;
+                    break;
+                case 'thumbsup':
+                    parameters.fingerRotations = [1.2, 1.2, 1.2, 1.2];
+                    parameters.thumbRotation = 0;
+                    break;
+                case 'ok':
+                    parameters.fingerRotations = [1.2, 0, 0, 0];
+                    parameters.thumbRotation = 0.8;
+                    break;
+                case 'rock':
+                    parameters.fingerRotations = [0, 1.2, 1.2, 0];
+                    parameters.thumbRotation = 0;
+                    break;
+                case 'shaka':
+                    parameters.fingerRotations = [0, 1.2, 1.2, 1.2];
+                    parameters.thumbRotation = 0;
+                    break;
+                case 'one':
+                    parameters.fingerRotations = [0, 1.2, 1.2, 1.2];
+                    parameters.thumbRotation = 1;
+                    break;
+            }
+
+            updateSliders();
+        }
+
+        function updateSliders() {
+            for (let i = 0; i < 4; i++) {
+                const value = Math.round(parameters.fingerRotations[i] / 1.2 * 100);
+                document.getElementById(`finger${i}Slider`).value = value;
+                document.getElementById(`finger${i}Value`).textContent = value;
+            }
+            const thumbValue = Math.round(parameters.thumbRotation * 100);
+            document.getElementById('thumbSlider').value = thumbValue;
+            document.getElementById('thumbValue').textContent = thumbValue;
+        }
+
+        function screenshot() {
+            const link = document.createElement('a');
+            link.download = `mao-3d-${Date.now()}.png`;
+            link.href = renderer.domElement.toDataURL();
+            link.click();
+        }
+
+        // Controle de rotação da mão (mais intuitivo)
         let isDragging = false;
-        let previousMousePosition = {
-            x: 0,
-            y: 0
-        };
+        let previousMouseX = 0;
+        let previousMouseY = 0;
 
-        // Zoom com roda do mouse
-        renderer.domElement.addEventListener('wheel', function (e) {
-            camera.position.z += e.deltaY * 0.01;
-            camera.position.z = Math.max(5, Math.min(20, camera.position.z));
-        });
-
-        // Variáveis para detectar rotação da mão
-        let previousRotation = new THREE.Quaternion();
-        let angularVelocity = new THREE.Vector3(0, 0, 0);
-        let fingerSwayX = 0;
-        let fingerSwayY = 0;
-        renderer.domElement.addEventListener('mousedown', function (e) {
+        renderer.domElement.addEventListener('mousedown', (e) => {
             isDragging = true;
+            previousMouseX = e.clientX;
+            previousMouseY = e.clientY;
         });
-        renderer.domElement.addEventListener('mousemove', function (e) {
-            if (isDragging) {
-                const deltaMove = {
-                    x: e.offsetX - previousMousePosition.x,
-                    y: e.offsetY - previousMousePosition.y
-                };
 
+        renderer.domElement.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaX = e.clientX - previousMouseX;
+                const deltaY = e.clientY - previousMouseY;
+
+                // Rotacionar a mão baseado no movimento do mouse
                 const deltaRotationQuaternion = new THREE.Quaternion()
                     .setFromEuler(new THREE.Euler(
-                        toRadians(deltaMove.y * 1),
-                        toRadians(deltaMove.x * 1),
+                        deltaY * 0.01,
+                        deltaX * 0.01,
                         0,
                         'XYZ'
                     ));
 
                 handMesh.quaternion.multiplyQuaternions(deltaRotationQuaternion, handMesh.quaternion);
-            }
 
-            previousMousePosition = {
-                x: e.offsetX,
-                y: e.offsetY
-            };
+                previousMouseX = e.clientX;
+                previousMouseY = e.clientY;
+            }
         });
 
-        renderer.domElement.addEventListener('mouseup', function (e) {
+        renderer.domElement.addEventListener('mouseup', () => {
             isDragging = false;
         });
 
-        // Controles de teclado para animações
-        document.addEventListener('keydown', (e) => {
-            const key = e.key.toLowerCase();
+        // Zoom com scroll
+        renderer.domElement.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            camera.position.z += e.deltaY * 0.01;
+            camera.position.z = Math.max(5, Math.min(20, camera.position.z));
+        }, { passive: false });
 
-            // Dedos individuais (1-4)
-            if (key >= '1' && key <= '4') {
-                const fingerIndex = parseInt(key) - 1;
-                fingerTargetRotations[fingerIndex] = fingerTargetRotations[fingerIndex] === 0 ? 1.2 : 0;
-            }
+        // Touch controls para mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
 
-            // Polegar (5)
-            if (key === '5') {
-                thumbTargetRotation = thumbTargetRotation === 0 ? 1 : 0;
-            }
-
-            // Fechar mão (F)
-            if (key === 'f') {
-                fingerTargetRotations = [1.2, 1.2, 1.2, 1.2];
-                thumbTargetRotation = 1;
-                animationMode = 'none';
-            }
-
-            // Abrir mão (O)
-            if (key === 'o') {
-                fingerTargetRotations = [0, 0, 0, 0];
-                thumbTargetRotation = 0;
-                animationMode = 'none';
-            }
-
-            // Acenar (W)
-            if (key === 'w') {
-                animationMode = animationMode === 'wave' ? 'none' : 'wave';
-                fingerTargetRotations = [0, 0, 0, 0];
-                thumbTargetRotation = 0;
-            }
-
-            // Sinal de paz (P)
-            if (key === 'p') {
-                animationMode = 'none';
-                fingerTargetRotations = [0, 0, 1.2, 1.2]; // Indicador e médio abertos
-                thumbTargetRotation = 1;
-            }
-
-            // Positivo (T)
-            if (key === 't') {
-                animationMode = 'none';
-                fingerTargetRotations = [1.2, 1.2, 1.2, 1.2];
-                thumbTargetRotation = 0;
+        renderer.domElement.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
             }
         });
 
-        function toRadians(angle) {
-            return angle * (Math.PI / 180);
-        }
+        renderer.domElement.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1) {
+                const deltaX = e.touches[0].clientX - touchStartX;
+                const deltaY = e.touches[0].clientY - touchStartY;
+
+                const deltaRotationQuaternion = new THREE.Quaternion()
+                    .setFromEuler(new THREE.Euler(
+                        deltaY * 0.01,
+                        deltaX * 0.01,
+                        0,
+                        'XYZ'
+                    ));
+
+                handMesh.quaternion.multiplyQuaternions(deltaRotationQuaternion, handMesh.quaternion);
+
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+        });
+
+        // Variáveis para detectar rotação da mão (inércia)
+        let previousRotation = new THREE.Quaternion();
+        let angularVelocity = new THREE.Vector3(0, 0, 0);
+        let fingerSwayX = 0;
+        let fingerSwayY = 0;
 
         // Animação
         function animate() {
             requestAnimationFrame(animate);
 
-            // Calcular velocidade angular da mão (diferença de rotação)
+            const time = Date.now() * 0.001 * parameters.speed;
+
+            // Calcular velocidade angular da mão (para inércia dos dedos)
             const currentRotation = handMesh.quaternion.clone();
             const rotationDiff = new THREE.Quaternion();
             rotationDiff.copy(currentRotation).multiply(previousRotation.clone().invert());
 
-            // Converter quaternion para ângulos de Euler para obter velocidade angular
             const euler = new THREE.Euler().setFromQuaternion(rotationDiff);
 
             // Atualizar velocidade angular com suavização
@@ -298,74 +541,72 @@
             angularVelocity.y += (euler.y * 10 - angularVelocity.y) * 0.3;
             angularVelocity.z += (euler.z * 10 - angularVelocity.z) * 0.3;
 
-            // Salvar rotação atual para próximo frame
             previousRotation.copy(currentRotation);
 
             // Aplicar inércia aos dedos baseado na velocidade angular
-            // Dedos balançam na direção oposta à rotação (efeito de inércia)
             fingerSwayX += (angularVelocity.y * 3 - fingerSwayX) * 0.2;
             fingerSwayY += (-angularVelocity.x * 3 - fingerSwayY) * 0.2;
 
             // Dissipação gradual
             angularVelocity.multiplyScalar(0.85);
+            fingerSwayX *= 0.9;
+            fingerSwayY *= 0.9;
 
-            const time = Date.now() * 0.001;
-
-            // Animar cada dedo com movimento orgânico baseado na rotação
+            // Animar cada dedo
             fingers.forEach((finger, fingerIndex) => {
                 const delay = fingerIndex * 0.1;
-                const swayFactor = 1 - (fingerIndex * 0.1); // Dedos centrais se movem mais
+                const swayFactor = 1 - (fingerIndex * 0.1);
 
-                // Curvatura baseada na rotação da mão (inércia)
                 const bendX = fingerSwayX * swayFactor * 0.3;
                 const bendY = fingerSwayY * swayFactor * 0.25;
                 const bendZ = angularVelocity.z * swayFactor * 2;
                 const naturalSway = Math.sin(time * 2 + delay) * 0.03;
 
-                // Animação de acenar
-                let waveOffset = 0;
-                if (animationMode === 'wave') {
-                    waveOffset = Math.sin(time * 3 + fingerIndex * 0.5) * 0.5;
+                let animOffset = 0;
+
+                if (parameters.animation === 'wave') {
+                    animOffset = Math.sin(time * 3 + fingerIndex * 0.5) * 0.5;
+                } else if (parameters.animation === 'drum') {
+                    animOffset = Math.max(0, Math.sin(time * 4 + fingerIndex * 0.8)) * 0.4;
+                } else if (parameters.animation === 'wiggle') {
+                    animOffset = Math.sin(time * 5 + fingerIndex * 1.2) * 0.3;
                 }
 
-                // Aplicar rotação do dedo inteiro (inércia)
-                finger.rotation.x = bendY + naturalSway + waveOffset;
+                finger.rotation.x = bendY + naturalSway + animOffset;
                 finger.rotation.y = bendZ * 0.5;
                 finger.rotation.z = bendX * 1;
 
-                // Articular cada falange individualmente
                 if (phalanges[fingerIndex]) {
                     const fingerPhalanges = phalanges[fingerIndex];
-                    const targetRot = fingerTargetRotations[fingerIndex];
+                    const targetRot = parameters.fingerRotations[fingerIndex];
 
-                    // Falange proximal (base) - curva menos
                     fingerPhalanges[0].rotation.x += (targetRot * 0.4 - fingerPhalanges[0].rotation.x) * 0.1;
-
-                    // Falange medial (meio) - curva médio
                     fingerPhalanges[1].rotation.x += (targetRot * 0.6 - fingerPhalanges[1].rotation.x) * 0.1;
-
-                    // Falange distal (ponta) - curva mais
                     fingerPhalanges[2].rotation.x += (targetRot * 0.8 - fingerPhalanges[2].rotation.x) * 0.1;
                 }
             });
 
-            // Polegar reage de forma mais sutil em todas as direções
+            // Polegar
             if (thumbGroup) {
-                thumbGroup.rotation.x = fingerSwayY * 0.15;
+                let thumbAnim = 0;
+                if (parameters.animation === 'wave') {
+                    thumbAnim = Math.sin(time * 3) * 0.3;
+                }
+
+                thumbGroup.rotation.x = fingerSwayY * 0.15 + thumbAnim;
                 thumbGroup.rotation.y = fingerSwayX * 0.2 + angularVelocity.z * 0.8;
                 thumbGroup.rotation.z = angularVelocity.z * 0.3 + Math.PI / 4;
 
-                // Articular falanges do polegar
                 if (thumbPhalanges.length > 0) {
-                    thumbPhalanges[0].rotation.x += (thumbTargetRotation * 0.5 - thumbPhalanges[0].rotation.x) * 0.1;
-                    thumbPhalanges[1].rotation.x += (thumbTargetRotation * 0.8 - thumbPhalanges[1].rotation.x) * 0.1;
+                    thumbPhalanges[0].rotation.x += (parameters.thumbRotation * 0.5 - thumbPhalanges[0].rotation.x) * 0.1;
+                    thumbPhalanges[1].rotation.x += (parameters.thumbRotation * 0.8 - thumbPhalanges[1].rotation.x) * 0.1;
                 }
             }
 
             renderer.render(scene, camera);
         }
 
-        // responsividade
+        // Responsividade
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -373,10 +614,8 @@
         });
 
         // Iniciar
-        animate();
         positionFingers();
-
-
+        animate();
     </script>
 
 </body>

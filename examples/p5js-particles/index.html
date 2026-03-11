@@ -25,11 +25,44 @@
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             z-index: 1000;
+            max-width: 500px;
+            max-height: 200vh;
+            overflow-y: auto;
         }
 
         .controls h3 {
             margin-top: 0;
             margin-bottom: 15px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+
+        .control-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 12px;
+        }
+
+        .control-group select option {
+            background: #1a1a2e;
+            color: white;
         }
 
         .controls button {
@@ -41,11 +74,38 @@
             cursor: pointer;
             margin: 5px 0;
             width: 100%;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .controls button:hover {
             opacity: 0.8;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .button-group button {
+            padding: 8px 10px;
+            font-size: 11px;
+            margin: 0;
+        }
+
+        .stats {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            z-index: 1000;
         }
 
         .back-btn {
@@ -68,47 +128,218 @@
     <a href="../../index.html" class="back-btn">← Voltar</a>
 
     <div class="controls">
-        <h3>🎨 Controles</h3>
-        <button onclick="changeColor()">Mudar Cores</button>
-        <button onclick="resetParticles()">Reset</button>
-        <p style="font-size: 12px; margin-top: 15px; opacity: 0.8;">
+        <h3>✨ Partículas</h3>
+
+        <div class="control-group">
+            <label>Modo de Comportamento:</label>
+            <select id="behaviorMode">
+                <option value="attract">🧲 Atração</option>
+                <option value="repel">💨 Repulsão</option>
+                <option value="orbit">🌀 Orbital</option>
+                <option value="explode">💥 Explosão</option>
+                <option value="wave">🌊 Ondas</option>
+                <option value="swarm">🐝 Enxame</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Paleta de Cores:</label>
+            <select id="colorPalette">
+                <option value="rainbow">🌈 Arco-íris</option>
+                <option value="fire">🔥 Fogo</option>
+                <option value="ocean">🌊 Oceano</option>
+                <option value="neon">💡 Neon</option>
+                <option value="sunset">🌅 Por do Sol</option>
+                <option value="aurora">🌌 Aurora</option>
+                <option value="matrix">🟢 Matrix</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Quantidade: <span id="countValue">25</span></label>
+            <input type="range" id="countSlider" min="10" max="50" value="25" step="10">
+        </div>
+
+        <div class="control-group">
+            <label>Tamanho: <span id="sizeValue">5</span></label>
+            <input type="range" id="sizeSlider" min="1" max="15" value="5" step="0.5">
+        </div>
+
+        <div class="control-group">
+            <label>Velocidade: <span id="speedValue">3</span></label>
+            <input type="range" id="speedSlider" min="1" max="10" value="3" step="0.5">
+        </div>
+
+        <div class="control-group">
+            <label>Conexão: <span id="connectionValue">100</span>px</label>
+            <input type="range" id="connectionSlider" min="0" max="200" value="100" step="10">
+        </div>
+
+        <div class="control-group">
+            <label>Força: <span id="forceValue">0.1</span></label>
+            <input type="range" id="forceSlider" min="0" max="1" value="0.1" step="0.05">
+        </div>
+
+        <div class="control-group">
+            <label>Trail (Rastro): <span id="trailValue">15</span></label>
+            <input type="range" id="trailSlider" min="5" max="50" value="15" step="5">
+        </div>
+
+        <div class="control-group">
+            <label style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="glowCheck" checked>
+                Efeito Brilho
+            </label>
+        </div>
+
+        <div class="control-group">
+            <label style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="pulseCheck">
+                Pulsação
+            </label>
+        </div>
+
+        <div class="button-group">
+            <button onclick="resetParticles()">🔄 Reset</button>
+            <button onclick="saveImage()">💾 Salvar</button>
+        </div>
+
+        <p style="font-size: 11px; margin-top: 15px; opacity: 0.7;">
             Mova o mouse para interagir!<br>
             Clique para adicionar partículas.
         </p>
     </div>
 
+    <div class="stats">
+        <div>FPS: <span id="fps">60</span></div>
+        <div>Partículas: <span id="particleCount">100</span></div>
+    </div>
+
     <script>
         let particles = [];
         let hueValue = 0;
-        let colorModule = 0;
+
+        // Configurações
+        let config = {
+            count: 100,
+            size: 5,
+            speed: 3,
+            connection: 100,
+            force: 0.1,
+            trail: 15,
+            glow: true,
+            pulse: false,
+            behavior: 'attract',
+            palette: 'rainbow'
+        };
+
+        // Paletas de cores
+        const palettes = {
+            rainbow: { hueStart: 0, hueRange: 360, sat: 80, bright: 100 },
+            fire: { hueStart: 0, hueRange: 60, sat: 100, bright: 100 },
+            ocean: { hueStart: 180, hueRange: 60, sat: 80, bright: 90 },
+            neon: { hueStart: 280, hueRange: 100, sat: 100, bright: 100 },
+            sunset: { hueStart: 330, hueRange: 60, sat: 90, bright: 95 },
+            aurora: { hueStart: 120, hueRange: 120, sat: 70, bright: 90 },
+            matrix: { hueStart: 120, hueRange: 20, sat: 100, bright: 80 }
+        };
+
+        // Event listeners
+        document.getElementById('behaviorMode').addEventListener('change', (e) => {
+            config.behavior = e.target.value;
+        });
+
+        document.getElementById('colorPalette').addEventListener('change', (e) => {
+            config.palette = e.target.value;
+        });
+
+        document.getElementById('countSlider').addEventListener('input', (e) => {
+            config.count = parseInt(e.target.value);
+            document.getElementById('countValue').textContent = config.count;
+            adjustParticleCount();
+        });
+
+        document.getElementById('sizeSlider').addEventListener('input', (e) => {
+            config.size = parseFloat(e.target.value);
+            document.getElementById('sizeValue').textContent = config.size;
+        });
+
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            config.speed = parseFloat(e.target.value);
+            document.getElementById('speedValue').textContent = config.speed;
+        });
+
+        document.getElementById('connectionSlider').addEventListener('input', (e) => {
+            config.connection = parseInt(e.target.value);
+            document.getElementById('connectionValue').textContent = config.connection;
+        });
+
+        document.getElementById('forceSlider').addEventListener('input', (e) => {
+            config.force = parseFloat(e.target.value);
+            document.getElementById('forceValue').textContent = config.force;
+        });
+
+        document.getElementById('trailSlider').addEventListener('input', (e) => {
+            config.trail = parseInt(e.target.value);
+            document.getElementById('trailValue').textContent = config.trail;
+        });
+
+        document.getElementById('glowCheck').addEventListener('change', (e) => {
+            config.glow = e.target.checked;
+        });
+
+        document.getElementById('pulseCheck').addEventListener('change', (e) => {
+            config.pulse = e.target.checked;
+        });
+
+        function adjustParticleCount() {
+            let diff = config.count - particles.length;
+
+            if (diff > 0) {
+                for (let i = 0; i < diff; i++) {
+                    particles.push(new Particle(random(width), random(height)));
+                }
+            } else if (diff < 0) {
+                particles.splice(0, -diff);
+            }
+        }
 
         function setup() {
             createCanvas(windowWidth, windowHeight);
             colorMode(HSB, 360, 100, 100, 100);
 
             // Criar partículas iniciais
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < config.count; i++) {
                 particles.push(new Particle(random(width), random(height)));
             }
         }
 
         function draw() {
-            background(0, 0, 0, 15); // Trail effect
+            background(0, 0, 0, config.trail);
 
             hueValue += 0.5;
             if (hueValue > 360) hueValue = 0;
 
+            // Atualizar estatísticas
+            if (frameCount % 30 === 0) {
+                document.getElementById('fps').textContent = Math.round(frameRate());
+                document.getElementById('particleCount').textContent = particles.length;
+            }
+
             for (let particle of particles) {
                 particle.update();
                 particle.show();
-                particle.connect(particles);
+
+                if (config.connection > 0) {
+                    particle.connect(particles);
+                }
             }
         }
 
         function mousePressed() {
             // Adicionar partículas ao clicar
-            for (let i = 0; i < 1; i++) {
-                particles.push(new Particle(mouseX, mouseY));
+            for (let i = 0; i < 5; i++) {
+                particles.push(new Particle(mouseX + random(-20, 20), mouseY + random(-20, 20)));
             }
         }
 
@@ -116,15 +347,15 @@
             resizeCanvas(windowWidth, windowHeight);
         }
 
-        function changeColor() {
-            colorMode = (colorMode + 1) % 3;
-        }
-
         function resetParticles() {
             particles = [];
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < config.count; i++) {
                 particles.push(new Particle(random(width), random(height)));
             }
+        }
+
+        function saveImage() {
+            saveCanvas('particulas', 'png');
         }
 
         class Particle {
@@ -132,23 +363,81 @@
                 this.pos = createVector(x, y);
                 this.vel = createVector(random(-1, 1), random(-1, 1));
                 this.acc = createVector(0, 0);
-                this.size = random(3, 8);
-                this.maxSpeed = 3;
+                this.baseSize = config.size;
+                this.pulseOffset = random(TWO_PI);
             }
 
             update() {
-                // Atração pelo mouse
                 let mouse = createVector(mouseX, mouseY);
                 let force = p5.Vector.sub(mouse, this.pos);
                 let distance = force.mag();
-                distance = constrain(distance, 25, 200);
 
-                let strength = (200 / distance) * 0.1;
-                force.setMag(strength);
-                this.acc.add(force);
+                switch (config.behavior) {
+                    case 'attract':
+                        distance = constrain(distance, 25, 300);
+                        let strength = (300 / distance) * config.force;
+                        force.setMag(strength);
+                        this.acc.add(force);
+                        break;
+
+                    case 'repel':
+                        if (distance < 150) {
+                            force.mult(-1);
+                            let repelStrength = (150 / distance) * config.force * 2;
+                            force.setMag(repelStrength);
+                            this.acc.add(force);
+                        }
+                        break;
+
+                    case 'orbit':
+                        if (distance < 200) {
+                            force.rotate(HALF_PI);
+                            let orbitStrength = config.force * 0.5;
+                            force.setMag(orbitStrength);
+                            this.acc.add(force);
+                        }
+                        break;
+
+                    case 'explode':
+                        if (distance < 100) {
+                            force.mult(-1);
+                            force.setMag(config.force * 5);
+                            this.acc.add(force);
+                        }
+                        break;
+
+                    case 'wave':
+                        let waveForce = createVector(
+                            sin(this.pos.y * 0.01 + frameCount * 0.05) * config.force,
+                            cos(this.pos.x * 0.01 + frameCount * 0.05) * config.force
+                        );
+                        this.acc.add(waveForce);
+                        break;
+
+                    case 'swarm':
+                        // Buscar centro de massa dos vizinhos
+                        let neighbors = 0;
+                        let centerOfMass = createVector(0, 0);
+
+                        for (let other of particles) {
+                            let d = dist(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
+                            if (d < 100 && d > 0) {
+                                centerOfMass.add(other.pos);
+                                neighbors++;
+                            }
+                        }
+
+                        if (neighbors > 0) {
+                            centerOfMass.div(neighbors);
+                            let swarmForce = p5.Vector.sub(centerOfMass, this.pos);
+                            swarmForce.setMag(config.force * 0.5);
+                            this.acc.add(swarmForce);
+                        }
+                        break;
+                }
 
                 this.vel.add(this.acc);
-                this.vel.limit(this.maxSpeed);
+                this.vel.limit(config.speed);
                 this.pos.add(this.vel);
                 this.acc.mult(0);
 
@@ -160,29 +449,45 @@
             }
 
             show() {
-                noStroke();
+                let palette = palettes[config.palette];
+                let hue = (hueValue + palette.hueStart) % 360;
+                let particleHue = (hue + random(-palette.hueRange / 2, palette.hueRange / 2)) % 360;
 
-                let col;
-                if (colorMode === 0) {
-                    col = color(hueValue, 80, 100, 80);
-                } else if (colorMode === 1) {
-                    col = color((hueValue + 180) % 360, 80, 100, 80);
-                } else {
-                    col = color(random(360), 80, 100, 80);
+                let size = this.baseSize;
+                if (config.pulse) {
+                    size = this.baseSize + sin(frameCount * 0.05 + this.pulseOffset) * (this.baseSize * 0.5);
                 }
 
-                fill(col);
-                circle(this.pos.x, this.pos.y, this.size);
+                if (config.glow) {
+                    // Efeito de brilho
+                    drawingContext.shadowBlur = 15;
+                    drawingContext.shadowColor = `hsla(${particleHue}, ${palette.sat}%, ${palette.bright}%, 0.8)`;
+                }
+
+                noStroke();
+                fill(particleHue, palette.sat, palette.bright, 90);
+                circle(this.pos.x, this.pos.y, size);
+
+                if (config.glow) {
+                    // Núcleo mais brilhante
+                    fill(particleHue, palette.sat - 20, 100, 100);
+                    circle(this.pos.x, this.pos.y, size * 0.5);
+                    drawingContext.shadowBlur = 0;
+                }
             }
 
             connect(particles) {
+                let palette = palettes[config.palette];
+
                 for (let other of particles) {
                     let d = dist(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
 
-                    if (d < 100 && d > 0) {
-                        let alpha = map(d, 0, 100, 50, 0);
-                        stroke(hueValue, 60, 100, alpha);
-                        strokeWeight(1);
+                    if (d < config.connection && d > 0) {
+                        let alpha = map(d, 0, config.connection, 60, 0);
+                        let hue = (hueValue + palette.hueStart) % 360;
+
+                        stroke(hue, palette.sat, palette.bright, alpha);
+                        strokeWeight(map(d, 0, config.connection, 2, 0.5));
                         line(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
                     }
                 }

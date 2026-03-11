@@ -23,23 +23,74 @@
             left: 20px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            padding: 20px;
+            padding: 30px;
             border-radius: 10px;
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             z-index: 1000;
-            max-width: 250px;
+            max-width: 260px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
         }
 
         .info h3 {
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 15px;
         }
 
         .info p {
-            font-size: 12px;
-            line-height: 1.6;
+            font-size: 10px;
+            line-height: 1.4;
+            opacity: 0.8;
+            margin-bottom: 0;
+            margin-top: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 10px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 11px;
+            margin-bottom: 4px;
             opacity: 0.9;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+
+        .control-group select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 11px;
+        }
+
+        .control-group select option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        .control-group button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0;
+            width: 100%;
+            font-size: 12px;
+        }
+
+        .control-group button:hover {
+            opacity: 0.8;
         }
 
         .back-btn {
@@ -62,10 +113,80 @@
     <a href="../../index.html" class="back-btn">← Voltar</a>
 
     <div class="info">
-        <h3>🌌 Galáxia Espiral</h3>
-        <p>Arraste para rotacionar<br>
-            Scroll para zoom<br><br>
-            Uma simulação de partículas em 3D criada com Three.js</p>
+        <h3>🌌 Galáxia 3D</h3>
+
+        <div class="control-group">
+            <label>Tipo de Galáxia:</label>
+            <select id="galaxyType">
+                <option value="spiral">🌀 Espiral</option>
+                <option value="elliptical">⭕ Elíptica</option>
+                <option value="ring">💍 Anel</option>
+                <option value="irregular">🌟 Irregular</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Paleta de Cores:</label>
+            <select id="colorPalette">
+                <option value="classic">🔵 Clássico</option>
+                <option value="fire">🔥 Fogo</option>
+                <option value="ocean">🌊 Oceano</option>
+                <option value="neon">💡 Neon</option>
+                <option value="purple">💜 Roxo</option>
+                <option value="green">💚 Verde</option>
+                <option value="gold">⭐ Dourado</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Partículas: <span id="countValue">10000</span></label>
+            <input type="range" id="countSlider" min="1000" max="50000" value="10000" step="1000">
+        </div>
+
+        <div class="control-group">
+            <label>Braços: <span id="branchesValue">3</span></label>
+            <input type="range" id="branchesSlider" min="2" max="8" value="3" step="1">
+        </div>
+
+        <div class="control-group">
+            <label>Spin: <span id="spinValue">1.0</span></label>
+            <input type="range" id="spinSlider" min="0" max="3" value="1" step="0.1">
+        </div>
+
+        <div class="control-group">
+            <label>Dispersão: <span id="randomnessValue">0.5</span></label>
+            <input type="range" id="randomnessSlider" min="0" max="2" value="0.5" step="0.1">
+        </div>
+
+        <div class="control-group">
+            <label>Tamanho: <span id="sizeValue">0.02</span></label>
+            <input type="range" id="sizeSlider" min="0.005" max="0.05" value="0.02" step="0.005">
+        </div>
+
+        <div class="control-group">
+            <label>Velocidade: <span id="speedValue">1.0</span>x</label>
+            <input type="range" id="speedSlider" min="0" max="5" value="1" step="0.1">
+        </div>
+
+        <div class="control-group">
+            <label style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="autoRotateCheck" checked>
+                🔄 Rotação Automática
+            </label>
+        </div>
+
+        <div class="control-group">
+            <button onclick="randomizeGalaxy()">🎲 Aleatório</button>
+        </div>
+
+        <div class="control-group">
+            <button onclick="screenshot()">📸 Captura</button>
+        </div>
+
+        <p>
+            🖱️ Arraste para rotacionar<br>
+            🔍 Scroll para zoom
+        </p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -73,7 +194,7 @@
         // Setup
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -82,7 +203,7 @@
         camera.position.z = 5;
         camera.position.y = 2;
 
-        // Criar galáxia
+        // Parâmetros da galáxia
         const parameters = {
             count: 10000,
             size: 0.02,
@@ -92,12 +213,119 @@
             randomness: 0.5,
             randomnessPower: 3,
             insideColor: '#ff6030',
-            outsideColor: '#1b3984'
+            outsideColor: '#1b3984',
+            type: 'spiral',
+            speed: 1.0,
+            autoRotate: true
+        };
+
+        // Paletas de cores
+        const colorPalettes = {
+            classic: { inside: '#ff6030', outside: '#1b3984' },
+            fire: { inside: '#ff0000', outside: '#ffaa00' },
+            ocean: { inside: '#00ffff', outside: '#0033aa' },
+            neon: { inside: '#ff00ff', outside: '#00ffff' },
+            purple: { inside: '#ff00aa', outside: '#4400ff' },
+            green: { inside: '#00ff00', outside: '#004400' },
+            gold: { inside: '#ffff00', outside: '#ff8800' }
         };
 
         let geometry = null;
         let material = null;
         let points = null;
+
+        // Event Listeners
+        document.getElementById('galaxyType').addEventListener('change', (e) => {
+            parameters.type = e.target.value;
+            generateGalaxy();
+        });
+
+        document.getElementById('colorPalette').addEventListener('change', (e) => {
+            const palette = colorPalettes[e.target.value];
+            parameters.insideColor = palette.inside;
+            parameters.outsideColor = palette.outside;
+            generateGalaxy();
+        });
+
+        document.getElementById('countSlider').addEventListener('input', (e) => {
+            parameters.count = parseInt(e.target.value);
+            document.getElementById('countValue').textContent = parameters.count;
+            generateGalaxy();
+        });
+
+        document.getElementById('branchesSlider').addEventListener('input', (e) => {
+            parameters.branches = parseInt(e.target.value);
+            document.getElementById('branchesValue').textContent = parameters.branches;
+            generateGalaxy();
+        });
+
+        document.getElementById('spinSlider').addEventListener('input', (e) => {
+            parameters.spin = parseFloat(e.target.value);
+            document.getElementById('spinValue').textContent = parameters.spin.toFixed(1);
+            generateGalaxy();
+        });
+
+        document.getElementById('randomnessSlider').addEventListener('input', (e) => {
+            parameters.randomness = parseFloat(e.target.value);
+            document.getElementById('randomnessValue').textContent = parameters.randomness.toFixed(1);
+            generateGalaxy();
+        });
+
+        document.getElementById('sizeSlider').addEventListener('input', (e) => {
+            parameters.size = parseFloat(e.target.value);
+            document.getElementById('sizeValue').textContent = parameters.size.toFixed(3);
+            generateGalaxy();
+        });
+
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            parameters.speed = parseFloat(e.target.value);
+            document.getElementById('speedValue').textContent = parameters.speed.toFixed(1);
+        });
+
+        document.getElementById('autoRotateCheck').addEventListener('change', (e) => {
+            parameters.autoRotate = e.target.checked;
+        });
+
+        function randomizeGalaxy() {
+            const types = ['spiral', 'elliptical', 'ring', 'irregular'];
+            const palettes = Object.keys(colorPalettes);
+
+            parameters.type = types[Math.floor(Math.random() * types.length)];
+            parameters.count = Math.floor(Math.random() * 40000) + 5000;
+            parameters.branches = Math.floor(Math.random() * 6) + 2;
+            parameters.spin = Math.random() * 3;
+            parameters.randomness = Math.random() * 2;
+            parameters.size = Math.random() * 0.03 + 0.01;
+
+            const selectedPalette = palettes[Math.floor(Math.random() * palettes.length)];
+            const palette = colorPalettes[selectedPalette];
+            parameters.insideColor = palette.inside;
+            parameters.outsideColor = palette.outside;
+
+            // Atualizar UI
+            document.getElementById('galaxyType').value = parameters.type;
+            document.getElementById('colorPalette').value = selectedPalette;
+            document.getElementById('countSlider').value = parameters.count;
+            document.getElementById('branchesSlider').value = parameters.branches;
+            document.getElementById('spinSlider').value = parameters.spin;
+            document.getElementById('randomnessSlider').value = parameters.randomness;
+            document.getElementById('sizeSlider').value = parameters.size;
+
+            document.getElementById('countValue').textContent = parameters.count;
+            document.getElementById('branchesValue').textContent = parameters.branches;
+            document.getElementById('spinValue').textContent = parameters.spin.toFixed(1);
+            document.getElementById('randomnessValue').textContent = parameters.randomness.toFixed(1);
+            document.getElementById('sizeValue').textContent = parameters.size.toFixed(3);
+
+            generateGalaxy();
+        }
+
+        function screenshot() {
+            const link = document.createElement('a');
+            link.download = `galaxia-${Date.now()}.png`;
+            link.href = renderer.domElement.toDataURL();
+            link.click();
+        }
 
         const generateGalaxy = () => {
             // Limpar galáxia anterior
@@ -117,22 +345,71 @@
             for (let i = 0; i < parameters.count; i++) {
                 const i3 = i * 3;
 
-                // Posição
-                const radius = Math.random() * parameters.radius;
-                const spinAngle = radius * parameters.spin;
-                const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2;
+                // Posição baseada no tipo de galáxia
+                let x, y, z, radius, mixValue;
 
-                const randomX = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
-                const randomY = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
-                const randomZ = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+                switch (parameters.type) {
+                    case 'spiral':
+                        radius = Math.random() * parameters.radius;
+                        const spinAngle = radius * parameters.spin;
+                        const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2;
 
-                positions[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
-                positions[i3 + 1] = randomY;
-                positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+                        const randomX = Math.pow(Math.random(), parameters.randomnessPower) *
+                            (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+                        const randomY = Math.pow(Math.random(), parameters.randomnessPower) *
+                            (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+                        const randomZ = Math.pow(Math.random(), parameters.randomnessPower) *
+                            (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+
+                        x = Math.cos(branchAngle + spinAngle) * radius + randomX;
+                        y = randomY;
+                        z = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+                        mixValue = radius / parameters.radius;
+                        break;
+
+                    case 'elliptical':
+                        const theta = Math.random() * Math.PI * 2;
+                        const phi = Math.acos(2 * Math.random() - 1);
+                        radius = Math.pow(Math.random(), 0.5) * parameters.radius;
+
+                        x = radius * Math.sin(phi) * Math.cos(theta) * 1.5;
+                        y = radius * Math.sin(phi) * Math.sin(theta) * 1.5;
+                        z = radius * Math.cos(phi) * 0.5;
+                        mixValue = radius / parameters.radius;
+                        break;
+
+                    case 'ring':
+                        radius = parameters.radius * 0.5 + (Math.random() - 0.5) * parameters.radius * 0.3;
+                        const ringAngle = Math.random() * Math.PI * 2;
+
+                        x = Math.cos(ringAngle) * radius + (Math.random() - 0.5) * parameters.randomness;
+                        y = (Math.random() - 0.5) * parameters.randomness * 0.3;
+                        z = Math.sin(ringAngle) * radius + (Math.random() - 0.5) * parameters.randomness;
+                        mixValue = 0.5 + (Math.random() - 0.5) * 0.5;
+                        break;
+
+                    case 'irregular':
+                        x = (Math.random() - 0.5) * parameters.radius * 2;
+                        y = (Math.random() - 0.5) * parameters.radius * 2;
+                        z = (Math.random() - 0.5) * parameters.radius * 2;
+                        radius = Math.sqrt(x * x + y * y + z * z);
+
+                        const cluster = Math.floor(Math.random() * parameters.branches);
+                        const clusterOffset = cluster * parameters.radius / parameters.branches;
+                        x += Math.cos(cluster) * clusterOffset * parameters.randomness;
+                        z += Math.sin(cluster) * clusterOffset * parameters.randomness;
+
+                        mixValue = Math.random();
+                        break;
+                }
+
+                positions[i3] = x;
+                positions[i3 + 1] = y;
+                positions[i3 + 2] = z;
 
                 // Cor
                 const mixedColor = colorInside.clone();
-                mixedColor.lerp(colorOutside, radius / parameters.radius);
+                mixedColor.lerp(colorOutside, mixValue);
 
                 colors[i3] = mixedColor.r;
                 colors[i3 + 1] = mixedColor.g;
@@ -156,22 +433,137 @@
 
         generateGalaxy();
 
-        // Mouse controls
-        let mouseX = 0;
-        let mouseY = 0;
-        let targetRotationX = 0;
-        let targetRotationY = 0;
+        // Câmera livre - orbital controls
+        let isDragging = false;
+        let previousMouseX = 0;
+        let previousMouseY = 0;
+
+        // Coordenadas esféricas da câmera
+        let cameraDistance = 7;
+        let cameraTheta = Math.PI / 4; // Ângulo vertical
+        let cameraPhi = 0; // Ângulo horizontal
+
+        let velocityTheta = 0;
+        let velocityPhi = 0;
+        const damping = 0.92;
+        const sensitivity = 0.008;
+
+        function updateCameraPosition() {
+            camera.position.x = cameraDistance * Math.sin(cameraTheta) * Math.cos(cameraPhi);
+            camera.position.y = cameraDistance * Math.cos(cameraTheta);
+            camera.position.z = cameraDistance * Math.sin(cameraTheta) * Math.sin(cameraPhi);
+            camera.lookAt(0, 0, 0);
+        }
+
+        document.addEventListener('mousedown', (event) => {
+            isDragging = true;
+            previousMouseX = event.clientX;
+            previousMouseY = event.clientY;
+            velocityTheta = 0;
+            velocityPhi = 0;
+        });
 
         document.addEventListener('mousemove', (event) => {
-            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            if (isDragging) {
+                const deltaX = event.clientX - previousMouseX;
+                const deltaY = event.clientY - previousMouseY;
+
+                velocityPhi = deltaX * sensitivity;
+                velocityTheta = deltaY * sensitivity;
+
+                cameraPhi += velocityPhi;
+                cameraTheta += velocityTheta;
+
+                // Limitar theta para evitar flip
+                cameraTheta = Math.max(0.1, Math.min(Math.PI - 0.1, cameraTheta));
+
+                updateCameraPosition();
+
+                previousMouseX = event.clientX;
+                previousMouseY = event.clientY;
+            }
         });
 
-        // Wheel zoom
-        document.addEventListener('wheel', (event) => {
-            camera.position.z += event.deltaY * 0.01;
-            camera.position.z = Math.max(2, Math.min(10, camera.position.z));
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
         });
+
+        // Wheel zoom mais amplo
+        document.addEventListener('wheel', (event) => {
+            event.preventDefault();
+            cameraDistance += event.deltaY * 0.01;
+            cameraDistance = Math.max(1, Math.min(30, cameraDistance));
+            updateCameraPosition();
+        }, { passive: false });
+
+        // Touch controls for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isTouching = false;
+
+        document.addEventListener('touchstart', (event) => {
+            if (event.touches.length === 1) {
+                isTouching = true;
+                touchStartX = event.touches[0].clientX;
+                touchStartY = event.touches[0].clientY;
+                velocityTheta = 0;
+                velocityPhi = 0;
+            }
+        });
+
+        document.addEventListener('touchmove', (event) => {
+            if (isTouching && event.touches.length === 1) {
+                const deltaX = event.touches[0].clientX - touchStartX;
+                const deltaY = event.touches[0].clientY - touchStartY;
+
+                velocityPhi = deltaX * sensitivity;
+                velocityTheta = deltaY * sensitivity;
+
+                cameraPhi += velocityPhi;
+                cameraTheta += velocityTheta;
+
+                cameraTheta = Math.max(0.1, Math.min(Math.PI - 0.1, cameraTheta));
+
+                updateCameraPosition();
+
+                touchStartX = event.touches[0].clientX;
+                touchStartY = event.touches[0].clientY;
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            isTouching = false;
+        });
+
+        // Pinch to zoom
+        let initialDistance = 0;
+        document.addEventListener('touchmove', (event) => {
+            if (event.touches.length === 2) {
+                const touch1 = event.touches[0];
+                const touch2 = event.touches[1];
+                const distance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+
+                if (initialDistance === 0) {
+                    initialDistance = distance;
+                } else {
+                    const delta = (distance - initialDistance) * 0.02;
+                    cameraDistance -= delta;
+                    cameraDistance = Math.max(1, Math.min(30, cameraDistance));
+                    updateCameraPosition();
+                    initialDistance = distance;
+                }
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            initialDistance = 0;
+        });
+
+        // Inicializar posição da câmera
+        updateCameraPosition();
 
         // Animation
         const clock = new THREE.Clock();
@@ -181,10 +573,22 @@
 
             const elapsedTime = clock.getElapsedTime();
 
-            // Rotação automática + controle do mouse
-            if (points) {
-                points.rotation.y = elapsedTime * 0.1 + mouseX * 0.5;
-                points.rotation.x = mouseY * 0.3;
+            // Aplicar inércia quando não está arrastando
+            if (!isDragging && !isTouching) {
+                velocityTheta *= damping;
+                velocityPhi *= damping;
+
+                if (Math.abs(velocityTheta) > 0.0005 || Math.abs(velocityPhi) > 0.0005) {
+                    cameraPhi += velocityPhi;
+                    cameraTheta += velocityTheta;
+                    cameraTheta = Math.max(0.1, Math.min(Math.PI - 0.1, cameraTheta));
+                    updateCameraPosition();
+                }
+            }
+
+            // Rotação automática da galáxia
+            if (points && parameters.autoRotate) {
+                points.rotation.y = elapsedTime * 0.05 * parameters.speed;
             }
 
             renderer.render(scene, camera);
